@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的VR播放器</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+</head>
+<body>
+    <a-scene>
+        <a-assets>
+            <video id="vr-video" src="video/02.mp4" autoplay loop crossorigin></video>
+        </a-assets>
+        <a-videosphere id="vr-sphere" src="#vr-video"></a-videosphere>
+        <a-camera id="camera" fov="80" restricted-look-controls></a-camera>
+    </a-scene>
+    <script>
+        AFRAME.registerComponent('restricted-look-controls', {
+            dependencies: ['look-controls'],
+            tick: function () {
+                var pitchObject = this.el.components['look-controls'].pitchObject;
+                var yawObject = this.el.components['look-controls'].yawObject;
+                pitchObject.rotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitchObject.rotation.x));
+                yawObject.rotation.y = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, yawObject.rotation.y));
+            }
+        });
+
+        var camera = document.getElementById('camera');
+        var currentFov = 80;
+        var maxFov = 120;
+        var minFov = 30;
+        var fovStep = 10;
+
+        document.addEventListener('keydown', function(event) {
+            if (event.keyCode === 56) { // 8 key
+                currentFov -= fovStep;
+                if (currentFov < minFov) {
+                    currentFov = minFov;
+                }
+            } else if (event.keyCode === 50) { // 2 key
+                currentFov += fovStep;
+                if (currentFov > maxFov) {
+                    currentFov = maxFov;
+                }
+            }
+            camera.setAttribute('fov', currentFov);
+        });
+    </script>
+</body>
+</html>

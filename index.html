@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>我的VR播放器</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <h1>歡迎來到我的VR播放器</h1>
+    <form>
+        <label for="username">用戶名：</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">密碼：</label><br>
+        <input type="password" id="password" name="password"><br>
+        <input type="submit" value="登錄">
+    </form>
+    <p>如果你還沒有帳號，請<a href="#">註冊</a>。</p>
+    <script src="script.js"></script>
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            event.preventDefault(); // 防止表单的默认提交行为
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            if (username === 'admin' && password === '123456') {
+                window.location.href = "video.html"; // 重定向到带有 VR 视频播放器的页面
+            } else {
+                alert('用户名或密码不正确！'); // 如果用户名或密码不正确，则显示警告框
+            }
+        });
+    </script>
+</body>
+</html>
