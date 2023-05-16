@@ -11,7 +11,7 @@
             <video id="vr-video" src="video/03.mp4" autoplay loop crossorigin></video>
         </a-assets>
         <a-videosphere id="vr-sphere" src="#vr-video"></a-videosphere>
-        <a-camera id="camera" fov="80" restricted-look-controls></a-camera>
+        <a-camera id="camera" fov="80" look-controls></a-camera>
     </a-scene>
     <script>
         AFRAME.registerComponent('restricted-look-controls', {
@@ -44,6 +44,13 @@
             }
             camera.setAttribute('fov', currentFov);
         });
+
+        // Detect if the user is on a mobile device
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            // If the user is on a mobile device, disable the gyro
+            camera.setAttribute('look-controls', 'gyroEnabled: false');
+        }
     </script>
 </body>
 </html>
