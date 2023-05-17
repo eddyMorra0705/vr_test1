@@ -11,9 +11,69 @@
             <video id="vr-video" src="video/03.mp4" autoplay loop crossorigin></video>
         </a-assets>
         <a-videosphere id="vr-sphere" src="#vr-video"></a-videosphere>
-        <a-camera id="camera" fov="80" look-controls></a-camera>
+        <a-camera id="camera" fov="80" touch-look-controls restricted-look-controls></a-camera>
     </a-scene>
     <script>
+        AFRAME.registerComponent('touch-look-controls', {
+            schema: {
+                enabled: {default: true}
+            },
+
+            init: function () {
+                this.pitchObject = new THREE.Object3D();
+                this.yawObject = new THREE.Object3D();
+                this.yawObject.position.y = 10;
+                this.yawObject.add(this.pitchObject);
+
+                this.onTouchStart = this.onTouchStart.bind(this);
+                this.onTouchMove = this.onTouchMove.bind(this);
+                this.onTouchEnd = this.onTouchEnd.bind(this);
+            },
+
+            play: function () {
+                window.addEventListener('touchstart', this.onTouchStart);
+                window.addEventListener('touchmove', this.onTouchMove);
+                window.addEventListener('touchend', this.onTouchEnd);
+            },
+
+            pause: function () {
+                window.removeEventListener('touchstart', this.onTouchStart);
+                window.removeEventListener('touchmove', this.onTouchMove);
+                window.removeEventListener('touchend', this.onTouchEnd);
+            },
+
+            onTouchStart: function (event) {
+                if (event.touches.length !== 1) { return; }
+
+                this.startX = event.touches[0].pageX;
+                this.startY = event.touches[0].pageY;
+            },
+
+            onTouchMove: function (event) {
+                if (!this.data.enabled || event.touches.length !== 1) { return; }
+
+                var dx = this.startX - event.touches[0].pageX;
+                var dy = this.startY - event.touches[0].pageY;
+
+                this.yawObject.rotation.y += dx * 0.002;
+                this.pitchObject.rotation.x += dy * 0.002;
+
+                this.startX = event.touches[0].pageX;
+                this.startY = event.touches[0].pageY;
+
+                var camera = this.el.sceneEl.camera;
+                camera.rotation.x = this.pitchObject.rotation.x;
+                camera.rotation.y = this.yawObject.rotation.y;
+            },
+
+            onTouchEnd: function (event) {
+                if (!this.data.enabled || event.touches.length > 0) { return; }
+
+                this.startX = null;
+                this.startY = null;
+            }
+        });
+
         AFRAME.registerComponent('restricted-look-controls', {
             dependencies: ['look-controls'],
             tick: function () {
@@ -26,6 +86,7 @@
 
         var camera = document.getElementById('camera');
         var currentFov = 80;
+        var
         var maxFov = 120;
         var minFov = 30;
         var fovStep = 10;
@@ -44,13 +105,6 @@
             }
             camera.setAttribute('fov', currentFov);
         });
-
-        // Detect if the user is on a mobile device
-        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        if (isMobile) {
-            // If the user is on a mobile device, disable the gyro
-            camera.setAttribute('look-controls', 'gyroEnabled: false');
-        }
     </script>
 </body>
 </html>
