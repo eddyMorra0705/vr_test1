@@ -73,7 +73,6 @@
                 this.startY = null;
             }
         });
-
         AFRAME.registerComponent('restricted-look-controls', {
             dependencies: ['look-controls'],
             tick: function () {
@@ -86,7 +85,6 @@
 
         var camera = document.getElementById('camera');
         var currentFov = 80;
-        var
         var maxFov = 120;
         var minFov = 30;
         var fovStep = 10;
@@ -105,6 +103,13 @@
             }
             camera.setAttribute('fov', currentFov);
         });
+
+        // Detect if the user is on a mobile device
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+            // If the user is on a mobile device, disable the gyro
+            camera.setAttribute('look-controls', 'gyroEnabled: false');
+        }
     </script>
 </body>
 </html>
